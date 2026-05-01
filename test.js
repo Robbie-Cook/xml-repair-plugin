@@ -3,9 +3,9 @@ import { isUnfinishedXml } from './index.js';
 
 const tests = [
   {
-    name: "Valid closed XML",
-    text: "<tool_call name=\"test\">hello</tool_call>",
-    expected: false
+    name: "Stop token with unclosed tag",
+    text: "<tool_call name=\"test\">hello_C",
+    expected: true
   },
   {
     name: "Partial opening tag at end",
@@ -41,6 +41,36 @@ const tests = [
     name: "Empty string",
     text: "",
     expected: false
+  },
+  {
+    name: "Valid closed XML with stop token",
+    text: "<tool_call name=\"test\">hello</tool_call>_C",
+    expected: false
+  },
+  {
+    name: "Stop token with unclosed tag",
+    text: "<tool_call name=\"ls\">_C",
+    expected: true
+  },
+  {
+    name: "Stop token with closed tag",
+    text: "<tool_call name=\"ls\">hello</tool_call>_C",
+    expected: false
+  },
+  {
+    name: "Stop token with partial tag",
+    text: "Here is the tool call: <tool_cal_C",
+    expected: true
+  },
+  {
+    name: "EOT_ID with unclosed tag",
+    text: "<tool_call name=\"ls\"><|eot_id|>",
+    expected: true
+  },
+  {
+    name: "Multiple unclosed tags with stop token",
+    text: "<thought>I should run this</thought><tool_call name=\"ls\">_C",
+    expected: true
   }
 ];
 
